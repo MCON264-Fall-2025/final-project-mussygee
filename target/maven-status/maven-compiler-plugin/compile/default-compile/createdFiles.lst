@@ -7,3 +7,4 @@ edu\course\eventplanner\service\VenueSelector.class
 edu\course\eventplanner\model\Guest.class
 edu\course\eventplanner\service\GuestListManager.class
 edu\course\eventplanner\service\TaskManager.class
+edu\course\eventplanner\service\SeatingPlanner$TableNode.class
