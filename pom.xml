@@ -26,6 +26,7 @@
         <version>3.2.5</version>
         <configuration>
           <useModulePath>false</useModulePath>
+          <argLine>@{argLine}</argLine>
         </configuration>
       </plugin>
       <plugin>
