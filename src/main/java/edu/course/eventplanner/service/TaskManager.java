@@ -6,8 +6,20 @@ import java.util.*;
 public class TaskManager {
     private final Queue<Task> upcoming = new LinkedList<>();
     private final Stack<Task> completed = new Stack<>();
-    public void addTask(Task task) { /* TODO */ }
-    public Task executeNextTask() { return null; }
-    public Task undoLastTask() { return null; }
+    public void addTask(Task task) { if (task == null) {
+        return;
+    }
+        upcoming.add(task); }
+    public Task executeNextTask() { if (upcoming.isEmpty()) {
+        return null;
+    }
+
+        Task task = upcoming.poll(); // FIFO
+        completed.push(task);        // record for undo
+        return task; }
+    public Task undoLastTask() { if (completed.isEmpty()) {
+        return null;
+    }
+        return completed.pop(); }
     public int remainingTaskCount() { return upcoming.size(); }
 }
