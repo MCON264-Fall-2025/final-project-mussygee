@@ -22,7 +22,12 @@ public class TaskManager {
             return null;
         }
         Task undone = completed.pop();
-        upcoming.add(undone);
+        if (upcoming instanceof java.util.Deque) {
+            ((java.util.Deque<Task>) upcoming).addFirst(undone);
+        } else {
+            upcoming.add(undone);
+        }
+
         return undone;
     }
     public int remainingTaskCount() { return upcoming.size(); }
