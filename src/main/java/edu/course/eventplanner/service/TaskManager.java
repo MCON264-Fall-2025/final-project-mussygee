@@ -21,15 +21,13 @@ public class TaskManager {
         if (completed.isEmpty()) {
             return null;
         }
+
         Task undone = completed.pop();
-        if (upcoming instanceof java.util.Deque) {
-            ((java.util.Deque<Task>) upcoming).addFirst(undone);
-        } else {
-            upcoming.add(undone);
-        }
+        upcoming.add(undone);
 
         return undone;
     }
+
     public int remainingTaskCount() { return upcoming.size(); }
 
     public List<Task> getUpcomingTasks() {
