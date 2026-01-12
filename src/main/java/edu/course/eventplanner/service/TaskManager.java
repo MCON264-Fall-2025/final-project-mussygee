@@ -17,9 +17,17 @@ public class TaskManager {
         Task task = upcoming.poll(); // FIFO
         completed.push(task);        // record for undo
         return task; }
-    public Task undoLastTask() { if (completed.isEmpty()) {
-        return null;
+    public Task undoLastTask() {
+        if (completed.isEmpty()) {
+            return null;
+        }
+        Task undone = completed.pop();
+        upcoming.add(undone);
+        return undone;
     }
-        return completed.pop(); }
     public int remainingTaskCount() { return upcoming.size(); }
+
+    public List<Task> getUpcomingTasks() {
+        return new ArrayList<>(upcoming);
+    }
 }

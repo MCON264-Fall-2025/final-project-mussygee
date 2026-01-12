@@ -38,6 +38,7 @@ public class Main {
             System.out.println("8. Undo last task");
             System.out.println("9. Print event summary");
             System.out.println("10. View available venues");
+            System.out.println("11. View remaining tasks");
             System.out.println("0. Exit");
 
             System.out.print("Choose an option: ");
@@ -163,26 +164,71 @@ public class Main {
                     System.out.println("Total seated: " + totalSeated + " / " + guestManager.getGuestCount());
                 }
 
+                case "6" -> {
+                    System.out.print("Enter task description: ");
+                    String description = in.nextLine().trim();
+                    if (description.isEmpty()) {
+                        System.out.println("Task description cannot be empty.");
+                        break;
+                    }
+                    Task t = new Task(description);
+                    taskManager.addTask(t);
 
+                    System.out.println("Task added: " + description);
+                    System.out.println("Upcoming tasks remaining: " + taskManager.remainingTaskCount());
+                }
+
+                case "7" -> {
+                    Task done = taskManager.executeNextTask();
+
+                    if (done == null) {
+                        System.out.println("No upcoming tasks to execute.");
+                    } else {
+                        System.out.println("Executed task: " + done.getDescription());
+                        System.out.println("Upcoming tasks remaining: " + taskManager.remainingTaskCount());
+                    }
+                }
+                case "8" -> {
+                    Task undone = taskManager.undoLastTask();
+                    if (undone == null) {
+                        System.out.println("Nothing to undo.");
+                    } else {
+                        System.out.println("Undid task: " + undone.getDescription());
+                        System.out.println("Upcoming tasks remaining: " + taskManager.remainingTaskCount());
+                    }
+                }
 
                 case "9" -> {
                     System.out.println("=== Event Summary ===");
 
+                    // Guests
                     System.out.println("Guests: " + guestManager.getGuestCount());
                     if (guestManager.getGuestCount() > 0) {
-                        System.out.println("Guest list:");
                         for (Guest g : guestManager.getAllGuests()) {
                             System.out.println(" - " + g.getName() + " (" + g.getGroupTag() + ")");
                         }
                     }
 
-                    System.out.println();
-                    System.out.println("Venues available: " + venues.size());
-                    System.out.println("Selected venue: " + (selectedVenue == null ? "None" : selectedVenue.getName()));
+                    // Venue
+                    if (selectedVenue == null) {
+                        System.out.println("Venue: (none selected)");
+                    } else {
+                        System.out.println("Venue: " + selectedVenue.getName()
+                                + " | Cost: " + selectedVenue.getCost()
+                                + " | Capacity: " + selectedVenue.getCapacity());
+                    }
 
-                    System.out.println();
-                    System.out.println("Upcoming tasks remaining: " + taskManager.remainingTaskCount());
-                    System.out.println("(Execute tasks with option 7; undo with option 8)");
+                    // Tasks
+                    List<Task> tasks = taskManager.getUpcomingTasks();
+                    System.out.println("Remaining tasks: " + tasks.size());
+                    if (!tasks.isEmpty()) {
+                        int i = 1;
+                        for (Task task : tasks) {
+                            System.out.println(" " + i + ". " + task.getDescription());
+                            i++;
+                        }
+                    }
+
                 }
 
                 case "10" -> {
@@ -198,6 +244,20 @@ public class Main {
                                 + " | Capacity: " + v.getCapacity()
                                 + " | Tables: " + v.getTables()
                                 + " | Seats/table: " + v.getSeatsPerTable());
+                    }
+                }
+
+                case "11" -> {
+                    List<Task> tasks = taskManager.getUpcomingTasks();
+                    if (tasks.isEmpty()) {
+                        System.out.println("No remaining tasks.");
+                        break;
+                    }
+                    System.out.println("=== Remaining Tasks ===");
+                    int i = 1;
+                    for (Task t : tasks) {
+                        System.out.println(i + ". " + t.getDescription());
+                        i++;
                     }
                 }
 
