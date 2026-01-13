@@ -4,36 +4,72 @@ import edu.course.eventplanner.model.Guest;
 import edu.course.eventplanner.model.Venue;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SeatingPlannerTest {
 
     @Test
-    void generateSeating_seatsEveryone_whenVenueHasEnoughSpace() {
-        // Adjust constructor if your Venue constructor differs
-        Venue venue = new Venue("TestVenue", 100.0, 10, 2, 5); // capacity 10, 2 tables, 5 seats each
+    void generateSeating_returnsEmptyMapWhenNoGuests() {
+        Venue v = new Venue("Test", 100, 2, 4);
+        SeatingPlanner planner = new SeatingPlanner(v);
 
-        SeatingPlanner planner = new SeatingPlanner(venue);
+        Map<Integer, List<Guest>> seating = planner.generateSeating(List.of());
 
-        // Adjust Guest constructor if needed
+        assertTrue(seating.isEmpty());
+    }
+
+    @Test
+    void generateSeating_seatsAllGuestsWithoutExceedingTableSize() {
+        Venue v = new Venue("Test", 100, 3, 2); // 3 tables, size 2 => max 6 seats
+        SeatingPlanner planner = new SeatingPlanner(v);
+
         List<Guest> guests = List.of(
-                new Guest("A", "family"),
-                new Guest("B", "family"),
-                new Guest("C", "friends"),
-                new Guest("D", "friends")
+                new Guest("A", "g1"),
+                new Guest("B", "g1"),
+                new Guest("C", "g2"),
+                new Guest("D", "g2"),
+                new Guest("E", "g3")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
 
-        assertNotNull(seating);
+        // all guests included exactly once
+        Set<String> seatedNames = new HashSet<>();
+        int total = 0;
 
-        int seatedCount = seating.values().stream().mapToInt(List::size).sum();
-        assertEquals(4, seatedCount);
+        for (Map.Entry<Integer, List<Guest>> e : seating.entrySet()) {
+            assertTrue(e.getKey() >= 1);
+            assertTrue(e.getValue().size() <= v.getTableSize());
+            for (Guest g : e.getValue()) {
+                seatedNames.add(g.getName());
+                total++;
+            }
+        }
 
-        // Basic grouping expectation: first table begins with family (since family queue starts first)
-        assertEquals("family", seating.get(1).get(0).getGroupTag());
+        assertEquals(guests.size(), total);
+        assertEquals(guests.size(), seatedNames.size());
+    }
+
+    @Test
+    void generateSeating_tableNumbersAreSortedStartingAtOne() {
+        Venue v = new Venue("Test", 100, 5, 2);
+        SeatingPlanner planner = new SeatingPlanner(v);
+
+        List<Guest> guests = List.of(
+                new Guest("A", "g1"),
+                new Guest("B", "g1"),
+                new Guest("C", "g1")
+        );
+
+        Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
+
+        List<Integer> keys = new ArrayList<>(seating.keySet());
+        List<Integer> sorted = new ArrayList<>(keys);
+        Collections.sort(sorted);
+
+        assertEquals(sorted, keys);
+        assertEquals(1, sorted.getFirst());
     }
 }

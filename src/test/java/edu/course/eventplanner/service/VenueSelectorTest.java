@@ -10,18 +10,37 @@ import static org.junit.jupiter.api.Assertions.*;
 public class VenueSelectorTest {
 
     @Test
-    void selectVenue_returnsLowestCost_thenSmallestCapacity() {
-        // If Venue constructor differs, tell me what it is.
-        Venue v1 = new Venue("CheapBig", 100.0, 50, 5, 10);   // cost=100, cap=50
-        Venue v2 = new Venue("CheapSmall", 100.0, 30, 5, 10); // cost=100, cap=30 (should win tie)
-        Venue v3 = new Venue("Expensive", 200.0, 30, 5, 10);
+    void selectVenue_returnsNullWhenNoVenueWithinBudget() {
+        VenueSelector selector = new VenueSelector();
+        List<Venue> venues = List.of(
+                new Venue("A", 1000, 10, 10),
+                new Venue("B", 900,  10, 10)
+        );
 
-        VenueSelector selector = new VenueSelector(List.of(v1, v2, v3));
+        assertNull(selector.selectVenue(venues, 200));
+    }
 
-        Venue chosen = selector.selectVenue(150.0, 25);
+    @Test
+    void selectVenue_picksCheapestWithinBudget() {
+        VenueSelector selector = new VenueSelector();
+        Venue cheap = new Venue("Cheap", 300, 10, 10);
+        Venue mid   = new Venue("Mid",   400, 10, 10);
 
-        assertNotNull(chosen);
-        assertEquals("CheapSmall", chosen.getName());
+        Venue result = selector.selectVenue(List.of(mid, cheap), 500);
+
+        assertNotNull(result);
+        assertEquals("Cheap", result.getName());
+    }
+
+    @Test
+    void selectVenue_tieOnCost_picksSmallerCapacity() {
+        VenueSelector selector = new VenueSelector();
+        Venue small = new Venue("Small", 500, 5, 10);
+        Venue large = new Venue("Large", 500, 10, 10);
+
+        Venue result = selector.selectVenue(List.of(large, small), 500);
+
+        assertNotNull(result);
+        assertEquals("Small", result.getName());
     }
 }
-

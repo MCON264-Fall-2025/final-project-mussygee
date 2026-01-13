@@ -21,10 +21,17 @@ public class TaskManager {
         if (completed.isEmpty()) {
             return null;
         }
-
         Task undone = completed.pop();
-        upcoming.add(undone);
 
+        if (upcoming instanceof java.util.Deque) {
+            ((java.util.Deque<Task>) upcoming).addFirst(undone);
+        } else {
+            java.util.LinkedList<Task> tmp = new java.util.LinkedList<>();
+            tmp.add(undone);
+            tmp.addAll(upcoming);
+            upcoming.clear();
+            upcoming.addAll(tmp);
+        }
         return undone;
     }
 
