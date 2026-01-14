@@ -13,8 +13,8 @@ public class VenueSelectorTest {
     void selectVenue_returnsNullWhenNoVenueWithinBudget() {
         VenueSelector selector = new VenueSelector();
         List<Venue> venues = List.of(
-                new Venue("A", 1000, 10, 10),
-                new Venue("B", 900,  10, 10)
+                new Venue("A", 1000, 10, 10, 8),
+                new Venue("B", 900,  10, 10, 8)
         );
 
         assertNull(selector.selectVenue(venues, 200));

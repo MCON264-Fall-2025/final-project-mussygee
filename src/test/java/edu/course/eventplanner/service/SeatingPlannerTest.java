@@ -12,7 +12,7 @@ public class SeatingPlannerTest {
 
     @Test
     void generateSeating_returnsEmptyMapWhenNoGuests() {
-        Venue v = new Venue("Test", 100, 2, 4);
+        Venue v = new Venue("Test", 100, 2, 4, 3);
         SeatingPlanner planner = new SeatingPlanner(v);
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(List.of());
@@ -22,7 +22,7 @@ public class SeatingPlannerTest {
 
     @Test
     void generateSeating_seatsAllGuestsWithoutExceedingTableSize() {
-        Venue v = new Venue("Test", 100, 3, 2); // 3 tables, size 2 => max 6 seats
+        Venue v = new Venue("Test", 100, 5, 3, 2); // 3 tables, size 2 => max 6 seats
         SeatingPlanner planner = new SeatingPlanner(v);
 
         List<Guest> guests = List.of(
@@ -41,7 +41,7 @@ public class SeatingPlannerTest {
 
         for (Map.Entry<Integer, List<Guest>> e : seating.entrySet()) {
             assertTrue(e.getKey() >= 1);
-            assertTrue(e.getValue().size() <= v.getTableSize());
+            assertTrue(e.getValue().size() <= v.getSeatsPerTable());
             for (Guest g : e.getValue()) {
                 seatedNames.add(g.getName());
                 total++;
@@ -54,7 +54,7 @@ public class SeatingPlannerTest {
 
     @Test
     void generateSeating_tableNumbersAreSortedStartingAtOne() {
-        Venue v = new Venue("Test", 100, 5, 2);
+        Venue v = new Venue("Test", 100, 5, 2, 3);
         SeatingPlanner planner = new SeatingPlanner(v);
 
         List<Guest> guests = List.of(
