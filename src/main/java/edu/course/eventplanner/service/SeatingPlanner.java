@@ -46,7 +46,7 @@ public class SeatingPlanner {
 
     public Map<Integer, List<Guest>> generateSeating(List<Guest> guests) {
         // Always return a non-null map
-        Map<Integer, List<Guest>> seating = new HashMap<>();
+        Map<Integer, List<Guest>> seating = new LinkedHashMap<>();
         if (guests == null || guests.isEmpty()) {
             return seating;
         }

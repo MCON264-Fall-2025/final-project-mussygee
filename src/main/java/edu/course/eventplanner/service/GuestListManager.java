@@ -14,12 +14,25 @@ public class GuestListManager {
         String name = guest.getName().trim();
         if (name.isEmpty()) return;
 
-        String key = name.toLowerCase();
+        String nameKey = name.toLowerCase();
 
-        if (guestByName.containsKey(key)) return;
+        if (guestByName.containsKey(nameKey)) {
+            Guest existing = guestByName.get(nameKey);
+
+            guestByName.remove(nameKey);
+
+            if (existing != null && existing.getGroupTag() != null) {
+                String existingGroup = existing.getGroupTag().trim();
+                if (!existingGroup.isEmpty()) {
+                    guestByName.put(existingGroup.toLowerCase(), guest);
+                }
+            }
+            return;
+        }
 
         guests.add(guest);
-        guestByName.put(key, guest);
+        guestByName.put(nameKey, guest);
+
     }
 
 
@@ -28,19 +41,44 @@ public class GuestListManager {
             return false;
         }
 
-        Guest guest = guestByName.remove(guestName);
-        if (guest == null) {
+        String name = guestName.trim();
+        if (name.isEmpty()) {
             return false;
         }
-        return guests.remove(guest);
+        String nameKey = name.toLowerCase();
+
+        Guest removed = guestByName.remove(nameKey);
+        if (removed == null) {
+            return false;
+        }
+
+        guests.remove(removed);
+
+        if (removed.getGroupTag() != null) {
+            String group = removed.getGroupTag().trim();
+            if (!group.isEmpty()) {
+                String groupKey = group.toLowerCase();
+                if (guestByName.get(groupKey) == removed) {
+                    guestByName.remove(groupKey);
+                }
+            }
+        }
+        return true;
     }
 
     public Guest findGuest(String guestName) {
         if (guestName == null) {
             return null;
         }
-        return guestByName.get(guestName);
+
+        String name = guestName.trim();
+        if (name.isEmpty()) {
+            return null;
+        }
+        String key = name.toLowerCase();
+        return guestByName.get(key);
     }
+
 
     public int getGuestCount() {
         return guests.size();
