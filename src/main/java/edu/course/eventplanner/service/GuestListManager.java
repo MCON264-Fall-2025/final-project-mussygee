@@ -9,23 +9,19 @@ public class GuestListManager {
     private final Map<String, Guest> guestByName = new HashMap<>();
 
     public void addGuest(Guest guest) {
-        if (guest == null) {
-            return;
-        }
+        if (guest == null || guest.getName() == null) return;
 
-        String name = guest.getName();
-        if (name == null) {
-            return;
-        }
+        String name = guest.getName().trim();
+        if (name.isEmpty()) return;
 
-        // prevent duplicates by name (keeps list + map consistent)
-        if (guestByName.containsKey(name)) {
-            return;
-        }
+        String key = name.toLowerCase();
+
+        if (guestByName.containsKey(key)) return;
 
         guests.add(guest);
-        guestByName.put(name, guest);
+        guestByName.put(key, guest);
     }
+
 
     public boolean removeGuest(String guestName) {
         if (guestName == null) {

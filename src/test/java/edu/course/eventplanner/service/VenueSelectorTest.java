@@ -11,34 +11,37 @@ public class VenueSelectorTest {
 
     @Test
     void selectVenue_returnsNullWhenNoVenueWithinBudget() {
-        VenueSelector selector = new VenueSelector();
         List<Venue> venues = List.of(
                 new Venue("A", 1000, 10, 10, 8),
                 new Venue("B", 900,  10, 10, 8)
         );
 
-        assertNull(selector.selectVenue(venues, 200));
+        VenueSelector selector = new VenueSelector(venues);
+
+        assertNull(selector.selectVenue(100, 200));
     }
 
     @Test
     void selectVenue_picksCheapestWithinBudget() {
-        VenueSelector selector = new VenueSelector();
-        Venue cheap = new Venue("Cheap", 300, 10, 10);
-        Venue mid   = new Venue("Mid",   400, 10, 10);
+        List<Venue> venues = List.of(
+                new Venue("Cheap", 300, 1000, 10, 8),
+                new Venue("Mid", 400, 1000, 10, 8)
+        );
 
-        Venue result = selector.selectVenue(List.of(mid, cheap), 500);
+        VenueSelector selector = new VenueSelector(venues);
 
-        assertNotNull(result);
-        assertEquals("Cheap", result.getName());
+        Venue chosen = selector.selectVenue(1000, 50);
+        assertNotNull(chosen);
+        assertEquals("Cheap", chosen.getName());
     }
 
     @Test
     void selectVenue_tieOnCost_picksSmallerCapacity() {
-        VenueSelector selector = new VenueSelector();
-        Venue small = new Venue("Small", 500, 5, 10);
-        Venue large = new Venue("Large", 500, 10, 10);
+        Venue small = new Venue("Small", 500, 5, 10, 8);
+        Venue large = new Venue("Large", 500, 10, 10, 8);
 
-        Venue result = selector.selectVenue(List.of(large, small), 500);
+        VenueSelector selector = new VenueSelector(List.of(large, small));
+        Venue result = selector.selectVenue(500, 5);
 
         assertNotNull(result);
         assertEquals("Small", result.getName());
